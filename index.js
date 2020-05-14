@@ -15,14 +15,19 @@ const getListWeb = () => new Promise(async (resolve, reject) => {
   try {
     const listWeb = await getListWeb()
 
-    listWeb.forEach(async (elm, index) => {
+    // Remove duplicate
+    const cleanListWeb = listWeb.filter(function(elem, index, self) {
+      return index === self.indexOf(elem)
+    })
+
+    cleanListWeb.forEach(async (elm, index) => {
       let checkWeb = await isReachable(elm)
 
       if (checkWeb) {
-        console.log(`[${index+1}/${listWeb.length}] (${`Online`.green}) ${elm}`)
+        console.log(`[${index+1}/${cleanListWeb.length}] (${`Online`.green}) ${elm}`)
         fs.appendFile('./output/online.txt', elm, 'utf8')
       } else {
-        console.log(`[${index+1}/${listWeb.length}] (${`Offline`.red}) ${elm}`)
+        console.log(`[${index+1}/${cleanListWeb.length}] (${`Offline`.red}) ${elm}`)
         fs.appendFile('./output/offline.txt', elm, 'utf8')
       }
     })
